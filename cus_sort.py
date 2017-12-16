@@ -13,4 +13,4 @@ for line in open("./douban.md"):
 for line in sys.stdin:
   items   = line.strip("\n").split(" ")
   s_items = sorted([dict_a[i] for i in items])
-  print " ".join([dict_b[i] for i in s_items])
+  print(" ".join([dict_b[i] for i in s_items]))

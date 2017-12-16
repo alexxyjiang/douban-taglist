@@ -5,4 +5,4 @@ for line in sys.stdin:
   if key != "" and key in d:
     continue
   d[key]  = 1
-  print key
+  print(key)
