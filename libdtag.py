@@ -1,3 +1,20 @@
+from dataclasses import dataclass
+
+
+@dataclass(eq=True, order=True, unsafe_hash=True)
+class DoubanTag:
+    '''class for keeping track of an douban tag.'''
+    rank: int
+    name: str
+
+    def __init__(self, rank: int = 0, name: str = ''):
+        self.rank = rank
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+
 class DoubanTagDict(object):
 
     def __init__(self):
@@ -12,8 +29,7 @@ class DoubanTagDict(object):
         if self.seek(name) != None:
             pass
         else:
-            dtag = DoubanTag()
-            dtag.set(self.__size__, name)
+            dtag = DoubanTag(self.__size__, name)
             self.__rank_dict__[self.__size__] = dtag
             self.__name_dict__[name] = dtag
             self.__size__ += 1
@@ -38,34 +54,8 @@ class DoubanTagDict(object):
             file.write(f'* {dtag}\n')
 
 
-class DoubanTag(object):
-
-    def __init__(self):
-        self.__rank__ = 0
-        self.__name__ = ''
-
-    def __str__(self):
-        return self.name()
-
-    def __lt__(self, other):
-        if isinstance(other, DoubanTag):
-            return self.rank() < other.rank()
-        else:
-            return NotImplemented
-
-    def set(self, rank, name):
-        self.__rank__ = rank
-        self.__name__ = name
-
-    def rank(self):
-        return self.__rank__
-
-    def name(self):
-        return self.__name__
-
-
 # Global Access Part #
-VERSION = '0.2'
+VERSION = '0.3'
 
 
 def version():
