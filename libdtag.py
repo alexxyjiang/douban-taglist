@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# library for douban tag processing
+import aiofiles
 from dataclasses import dataclass
 
 
@@ -19,13 +22,20 @@ class DoubanTagDict(object):
 
     def __init__(self):
         self.__size__ = 0
+        self.__section_dict__ = {}
         self.__rank_dict__ = {}
         self.__name_dict__ = {}
 
     def __str__(self):
         return 'size: %d' % (self.__size__)
 
-    def add(self, name):
+    def add_section(self, section):
+        if not self.__size__ in self.__section_dict__:
+            self.__section_dict__[self.__size__] = [section]
+        else:
+            self.__section_dict__[self.__size__].append(section)
+
+    def add_name(self, name):
         if self.seek(name) != None:
             pass
         else:
@@ -33,6 +43,9 @@ class DoubanTagDict(object):
             self.__rank_dict__[self.__size__] = dtag
             self.__name_dict__[name] = dtag
             self.__size__ += 1
+
+    def add(self, name):
+        self.add_name(name)
 
     def seek(self, key):
         if isinstance(key, int):
@@ -48,14 +61,20 @@ class DoubanTagDict(object):
         else:
             return None
 
-    def write_md(self, file):
-        for i in range(self.__size__):
-            dtag = self.seek(i)
-            file.write(f'* {dtag}\n')
+    async def write_md(self, filename):
+        async with aiofiles.open(filename, mode='w') as file:
+            for i in range(self.__size__):
+                if i in self.__section_dict__:
+                    if i > 0:
+                        await file.write('\n')
+                    for j in range(len(self.__section_dict__[i])):
+                        await file.write(f'{self.__section_dict__[i][j]}\n')
+                dtag = self.seek(i)
+                await file.write(f'* {dtag}\n')
 
 
 # Global Access Part #
-VERSION = '0.3'
+VERSION = '0.4'
 
 
 def version():
